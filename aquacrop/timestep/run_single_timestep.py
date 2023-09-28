@@ -173,10 +173,10 @@ def solution_single_time_step(
     class_args = {
         key: value
         for key, value in Crop_.__dict__.items()
-        if not key.startswith("__") and not callable(key)
-    }
+        if not key.startswith("__") and not callable(key)}
+            
     Crop = CropStructNT(**class_args)
-
+    
     # Run simulations %%
     # 1. Check for groundwater table
     NewCond.th_fc_Adj, wt_in_soil = check_groundwater_table(
@@ -402,7 +402,7 @@ def solution_single_time_step(
     )
 
     # 16. Biomass accumulation
-    (NewCond.biomass, NewCond.biomass_ns) = biomass_accumulation(
+    (NewCond.biomass, NewCond.biomass_ns,NewCond.StressSFadjNEW,NewCond.StressSFadjpre,NewCond.Tr_ET0_accum,NewCond.WPadj,Crop,) = biomass_accumulation(
         Crop,
         NewCond.dap,
         NewCond.delayed_cds,
@@ -414,7 +414,18 @@ def solution_single_time_step(
         TrPot_NS,
         et0,
         growing_season,
+        NewCond.StressSFadjNEW,
+        NewCond.StressSFadjpre,
+        NewCond.Tr_ET0_accum,
+        NewCond.WPadj,
     )
+    
+    # Update global variables
+    param_struct.Seasonal_Crop_List[clock_struct.season_counter].Ksccx=Crop.Ksccx
+    param_struct.Seasonal_Crop_List[clock_struct.season_counter].Ksexpf=Crop.Ksexpf
+    param_struct.Seasonal_Crop_List[clock_struct.season_counter].Kswp=Crop.Kswp
+    param_struct.Seasonal_Crop_List[clock_struct.season_counter].fcdecline=Crop.fcdecline
+    param_struct.Seasonal_Crop_List[clock_struct.season_counter].MaxCanopyCD=Crop.MaxCanopyCD
 
     # 17. Harvest index
     NewCond = harvest_index(
@@ -519,6 +530,11 @@ def solution_single_time_step(
         NewCond.harvest_index,
         NewCond.harvest_index_adj,
         NewCond.yield_,
+        Tr,
+        TrPot_NS,
+        TrPot,
+        Tr/et0,
+        NewCond.WPadj
     ]
 
     # Final output (if at end of growing season)
