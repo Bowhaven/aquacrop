@@ -133,14 +133,24 @@ def read_model_parameters(
     param_struct.CO2.co2_data_processed = pd.Series(CO2conc_interp, index=sim_years)  # maybe get rid of this
     
     if crop.harvest_date is None:
-        crop, gdd_cum = compute_crop_calendar(
-            crop,
-            clock_struct.planting_dates,
-            clock_struct.simulation_start_date,
-            clock_struct.time_span,
-            weather_df,
-            param_struct,#for soil fertility stress
-        )
+        if crop.need_calib==1:
+            crop, gdd_cum = compute_crop_calendar(
+                crop,
+                clock_struct.planting_dates,
+                clock_struct.simulation_start_date,
+                clock_struct.time_span,
+                weather_df,
+                param_struct,#for soil fertility stress
+            )
+        else:
+            crop = compute_crop_calendar(
+                crop,
+                clock_struct.planting_dates,
+                clock_struct.simulation_start_date,
+                clock_struct.time_span,
+                weather_df,
+                param_struct,#for soil fertility stress
+            )
         mature = int(crop.MaturityCD + 30)
         plant = pd.to_datetime("1990/" + crop.planting_date)
         harv = plant + np.timedelta64(mature, "D")

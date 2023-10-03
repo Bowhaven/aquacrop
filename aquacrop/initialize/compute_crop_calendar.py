@@ -324,7 +324,7 @@ def compute_crop_calendar(
         else:
             crop.FloweringCD = ModelConstants.NO_VALUE
 
-    if crop.SwitchGDD == 1:
+    if crop.need_calib == 1:
         return crop, gdd_cum
     else:
-        return crop, None
+        return crop
