@@ -18,8 +18,7 @@ def compute_crop_calendar(
     clock_struct_simulation_start_date: str,
     clock_struct_time_span: "DatetimeIndex",
     weather_df: "DataFrame",
-    ParamStruct:"ParamStruct",
-) -> "Crop":
+    ParamStruct:"ParamStruct"):
     """
     Function to compute additional parameters needed to define crop phenological calendar
 
@@ -325,4 +324,4 @@ def compute_crop_calendar(
         else:
             crop.FloweringCD = ModelConstants.NO_VALUE
 
-    return crop
+    return crop, gdd_cum

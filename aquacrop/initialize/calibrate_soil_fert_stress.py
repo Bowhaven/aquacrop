@@ -1,10 +1,8 @@
 import numpy as np
 import pandas as pd
 
-from ..entities.modelConstants import ModelConstants
+from ..entities.paramStruct import ParamStruct
 from typing import TYPE_CHECKING
-
-
 
 if TYPE_CHECKING:
     # Important: classes are only imported when types are checked, not in production.
@@ -17,28 +15,19 @@ from .calculate_HI_linear import calculate_HI_linear
 def calibrate_soil_fert_stress(
     crop: "Crop",
     gdd_cum: "float",
-    clock_struct_simulation_start_date: str,
-    clock_struct_time_span: "DatetimeIndex",
-    weather_df: "DataFrame",
     ParamStruct:"ParamStruct",
 ) -> "Crop":
     """
-    Function to compute additional parameters needed to define crop phenological calendar
-
-    <a href="https://www.fao.org/3/BR248E/br248e.pdf#page=28" target="_blank">Reference Manual</a> (pg. 19-20)
+    Function to compute additional parameters for soil fertility stress
 
 
     Arguments:
 
         crop (Crop):  Crop object containing crop paramaters
 
-        clock_struct_planting_dates (DatetimeIndex):  list of planting dates
+        gdd_cum (float?):  cumulative GDD values throughout season
 
-        clock_struct_simulation_start_date (str):  sim start date
-
-        clock_struct_time_span (DatetimeIndex):  all dates between sim start and end dates
-
-        weather_df (DataFrame):  weather data for simulation period
+        param_struct (ParamStruct):  Contains model crop and soil paramaters
 
 
     Returns:
@@ -379,7 +368,7 @@ def calibrate_soil_fert_stress(
                 crop.YldFormCD, crop.HIini, crop.HI0, crop.HIGC
             )
             else:
-                # No linear switch for leafy vegetable or root/tiber crops
+                # No linear switch for leafy vegetable or root/tuber crops
                 crop.tLinSwitch = 0
                 crop.dHILinear = 0.
 
@@ -434,7 +423,7 @@ def calibrate_soil_fert_stress(
             while adj_flag and kk_<100:
                 kk_+=1
 
-                CCx_temp=crop.CCx*Ksccx_temp
+                CCx_temp=crop.CCx*Ksccx_temp # not used
                 if crop.fcdecline_in==0:
                     CCxfinal=0.92*crop.CCx
                 elif crop.fcdecline_in==1:

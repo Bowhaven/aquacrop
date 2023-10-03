@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from ..entities.paramStruct import ParamStruct
 from .compute_crop_calendar import compute_crop_calendar
+from .calibrate_soil_fert_stress import calibrate_soil_fert_stress
 from typing import TYPE_CHECKING
 
 from ..entities.co2 import CO2
@@ -132,7 +133,7 @@ def read_model_parameters(
     param_struct.CO2.co2_data_processed = pd.Series(CO2conc_interp, index=sim_years)  # maybe get rid of this
     
     if crop.harvest_date is None:
-        crop = compute_crop_calendar(
+        crop, gdd_cum = compute_crop_calendar(
             crop,
             clock_struct.planting_dates,
             clock_struct.simulation_start_date,
@@ -145,6 +146,21 @@ def read_model_parameters(
         harv = plant + np.timedelta64(mature, "D")
         new_harvest_date = str(harv.month) + "/" + str(harv.day)
         crop.harvest_date = new_harvest_date
+
+        print(f'gdd_cum: {gdd_cum}, of type: {type(gdd_cum)}')
+
+        # once compute_crop_calendar has completed, run soil fert stress calibration
+        if crop.need_calib != 0:
+            crop = calibrate_soil_fert_stress(
+                crop,
+                gdd_cum,
+                param_struct
+            )
+
+    # catch exceptions when users specify a crop that triggers soil fert stress calibration when harvest date is also specified (i.e. not GDD mode) 
+    elif crop.need_calib != 0:
+        raise ValueError('You cannot currently run the soil fertility stress module in calendar days mode, please use GDD mode to continue using soil fertility stress.')
+    
 
     # extract years from simulation start and end date
     start_end_years = [sim_start_date.year, sim_end_date.year]
