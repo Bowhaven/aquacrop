@@ -157,10 +157,9 @@ def read_model_parameters(
         new_harvest_date = str(harv.month) + "/" + str(harv.day)
         crop.harvest_date = new_harvest_date
 
-        print(f'gdd_cum: {gdd_cum}, of type: {type(gdd_cum)}')
-
         # once compute_crop_calendar has completed, run soil fert stress calibration
         if crop.need_calib == 1:
+            print(f'gdd_cum: {gdd_cum}, of type: {type(gdd_cum)}')
             crop = calibrate_soil_fert_stress(
                 crop,
                 gdd_cum,
