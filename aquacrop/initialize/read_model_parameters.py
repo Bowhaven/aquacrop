@@ -133,7 +133,7 @@ def read_model_parameters(
     param_struct.CO2.co2_data_processed = pd.Series(CO2conc_interp, index=sim_years)  # maybe get rid of this
     
     if crop.harvest_date is None:
-        crop, gdd_temp = compute_crop_calendar(
+        crop, gdd_cum = compute_crop_calendar(
             crop,
             clock_struct.planting_dates,
             clock_struct.simulation_start_date,
@@ -147,13 +147,13 @@ def read_model_parameters(
         new_harvest_date = str(harv.month) + "/" + str(harv.day)
         crop.harvest_date = new_harvest_date
 
-        print(f'gdd_cum: {gdd_temp}, of type: {type(gdd_temp)}')
+        print(f'gdd_cum: {gdd_cum}, of type: {type(gdd_cum)}')
 
         # once compute_crop_calendar has completed, run soil fert stress calibration
         if crop.need_calib == 1:
             crop = calibrate_soil_fert_stress(
                 crop,
-                gdd_temp,
+                gdd_cum,
                 param_struct
             )
 
