@@ -128,7 +128,7 @@ def compute_variables(
         # crop.calculate_additional_params()
 
         # Crop calander
-        crop = compute_crop_calendar(
+        crop, _ = compute_crop_calendar(
             crop,
             clock_struct.planting_dates,
             clock_struct.simulation_start_date,
