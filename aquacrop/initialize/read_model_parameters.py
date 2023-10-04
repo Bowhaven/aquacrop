@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import sys
 from ..entities.paramStruct import ParamStruct
 from .compute_crop_calendar import compute_crop_calendar
 from .calibrate_soil_fert_stress import calibrate_soil_fert_stress
@@ -142,6 +143,19 @@ def read_model_parameters(
                 weather_df,
                 param_struct,#for soil fertility stress
             )
+            # if (
+            #     crop.RelativeBio==1 and
+            #     crop.Ksccx_in==1 and
+            #     crop.fcdecline_in==0
+            # ):
+            # once compute_crop_calendar has completed, run soil fert stress calibration
+            print(f'gdd_cum: {gdd_cum}, of type: {type(gdd_cum)}')
+            crop = calibrate_soil_fert_stress(
+                crop,
+                gdd_cum,
+                param_struct
+            )
+
         else:
             crop = compute_crop_calendar(
                 crop,
@@ -157,14 +171,8 @@ def read_model_parameters(
         new_harvest_date = str(harv.month) + "/" + str(harv.day)
         crop.harvest_date = new_harvest_date
 
-        # once compute_crop_calendar has completed, run soil fert stress calibration
-        if crop.need_calib == 1:
-            print(f'gdd_cum: {gdd_cum}, of type: {type(gdd_cum)}')
-            crop = calibrate_soil_fert_stress(
-                crop,
-                gdd_cum,
-                param_struct
-            )
+        
+            
 
     # catch exceptions when users specify a crop that triggers soil fert stress calibration when harvest date is also specified (i.e. not GDD mode) 
     elif crop.need_calib != 0:
