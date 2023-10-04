@@ -135,6 +135,7 @@ def read_model_parameters(
     
     if crop.harvest_date is None:
         if crop.need_calib==1:
+            print('Entered need_calib==1 section of read_model_parameters')
             crop, gdd_cum = compute_crop_calendar(
                 crop,
                 clock_struct.planting_dates,

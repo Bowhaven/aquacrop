@@ -14,8 +14,8 @@ from .calculate_HI_linear import calculate_HI_linear
 
 def calibrate_soil_fert_stress(
     crop: "Crop",
-    gdd_cum: "float",
-    ParamStruct:"ParamStruct",
+    gdd_cum: "pd.Series",
+    ParamStruct: "ParamStruct",
 ) -> "Crop":
     """
     Function to compute additional parameters for soil fertility stress
@@ -25,7 +25,7 @@ def calibrate_soil_fert_stress(
 
         crop (Crop):  Crop object containing crop paramaters
 
-        gdd_cum (float?):  cumulative GDD values throughout season
+        gdd_cum (pd.Series):  cumulative GDD values throughout season
 
         param_struct (ParamStruct):  Contains model crop and soil paramaters
 
@@ -70,7 +70,7 @@ def calibrate_soil_fert_stress(
     max_cc=0
 
     for day_ in range(1,np.min([crop.MaturityCD+1,len(gdd_cum)])):
-        #cold tress
+        #cold stress
         GDD_=gdd_cum.values[day_]-gdd_cum.values[day_-1]
         
         #copy from solution.py
