@@ -162,7 +162,7 @@ def read_model_parameters(
 
             if crop.sfertstress == 0:
                 stress=1-crop.RelativeBio
-                warnings.warn("No user-specified soil fertility stress value, using default estimate: {}".format(stress))
+                warnings.warn("No user-specified soil fertility stress value, using default estimate: {}".format(stress), stacklevel=1)
             else:
                 stress=crop.sfertstress
 

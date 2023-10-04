@@ -5,6 +5,7 @@ import time
 import datetime
 import os
 import logging
+import sys
 import warnings
 from typing import Dict, Union, Optional, Tuple, TYPE_CHECKING
 from .scripts.checkIfPackageIsCompiled import compile_all_AOT_files
@@ -136,6 +137,15 @@ class AquaCropModel:
             self.initial_water_content.depth_layer=new_water_depths
             warnings.warn("Initial water content layers ({}) do not match number of soil layers ({}), initial water content layers now set to: {}".format(iwc_layers, soil_layers,self.initial_water_content.value), stacklevel=1)
             
+        # If need_calib has been specified but not three key args, error:
+        if (self.crop.need_calib == 1 and
+            self.crop.RelativeBio == 1 and
+            self.crop.Ksccx_in == 1 and
+            self.crop.fcdecline_in == 0
+        ):
+            warnings.warn("Soil fertility stress calibration requires specification of RelativeBio, Ksscx_in and fcdecline_in. Please specify these parameters in your crop input and try again.",stacklevel=1)
+            sys.exit()
+
         self.irrigation_management = irrigation_management
         self.field_management = field_management
         self.fallow_field_management = fallow_field_management
