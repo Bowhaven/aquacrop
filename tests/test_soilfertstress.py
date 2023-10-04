@@ -38,7 +38,7 @@ Ksccx_es=model1.crop.Ksccx_es
 relbio_es=model1.crop.relbio_es
 
 # Calculate additional soil fertility stress parameters
-stress=57/100
+stress=1-0.6
 IrrMethod=0
 loc_=np.argmin(np.abs(sf_es[0:100]-stress))
 
@@ -106,3 +106,4 @@ plt.figure(figsize=(20,10))
 plt.plot(time,aq.loc[time,'Tr'],label='Win')
 plt.plot(time,model_results.loc[time,'Tr'],label='PY')
 plt.legend()
+plt.show()

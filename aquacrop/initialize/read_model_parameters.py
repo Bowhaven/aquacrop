@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import warnings
 import sys
 from ..entities.paramStruct import ParamStruct
 from .compute_crop_calendar import compute_crop_calendar
@@ -135,7 +136,6 @@ def read_model_parameters(
     
     if crop.harvest_date is None:
         if crop.need_calib==1:
-            print('Entered need_calib==1 section of read_model_parameters')
             crop, gdd_cum = compute_crop_calendar(
                 crop,
                 clock_struct.planting_dates,
@@ -144,21 +144,56 @@ def read_model_parameters(
                 weather_df,
                 param_struct,#for soil fertility stress
             )
-            # if (
-            #     crop.RelativeBio==1 and
-            #     crop.Ksccx_in==1 and
-            #     crop.fcdecline_in==0
-            # ):
+
             # once compute_crop_calendar has completed, run soil fert stress calibration
-            print(f'gdd_cum: {gdd_cum}, of type: {type(gdd_cum)}')
             crop = calibrate_soil_fert_stress(
                 crop,
                 gdd_cum,
                 param_struct
-            )
+            ) # I think this is equivalent to the '_initialize()' call in the test notebooks
+
+            # Calculate soil fert stress parameters
+            sf_es=crop.sf_es
+            Ksexpf_es=crop.Ksexpf_es
+            fcdecline_es=crop.fcdecline_es
+            Kswp_es=crop.Kswp_es
+            Ksccx_es=crop.Ksccx_es
+            relbio_es=crop.relbio_es
+
+            if crop.sfertstress == 0:
+                stress=1-crop.RelativeBio
+                warnings.warn("No user-specified soil fertility stress value, using default estimate: {}".format(stress))
+            else:
+                stress=crop.sfertstress
+
+            loc_=np.argmin(np.abs(sf_es[0:100]-stress))
+
+            # Cont. calculating soil fert stress parameters
+            Ksccx=Ksccx_es[loc_]
+            Ksexpf=Ksexpf_es[loc_]
+            Kswp=Kswp_es[loc_]
+            fcdecline=fcdecline_es[loc_]
+            ccx_=(1-Ksccx)*100
+            cgc_=(1-Ksexpf)*100
+            dcc_=fcdecline*10000/100
+            wp_=(1-Kswp)*100
+
+            # Set calibrated soil fert stress parameters for crop
+            crop.Ksccx=1-ccx_/100
+            crop.Ksexpf=1-cgc_/100
+            crop.Kswp=1-wp_/100
+            crop.fcdecline=dcc_/100
+            crop.sfertstress=stress
+            crop.sf_es=sf_es
+            crop.Ksexpf_es=Ksexpf_es
+            crop.fcdecline_es=fcdecline_es
+            crop.Kswp_es=Kswp_es
+            crop.Ksccx_es=Ksccx_es
+            crop.relbio_es=relbio_es
+            
 
         else:
-            crop = compute_crop_calendar(
+            crop,_ = compute_crop_calendar(
                 crop,
                 clock_struct.planting_dates,
                 clock_struct.simulation_start_date,
