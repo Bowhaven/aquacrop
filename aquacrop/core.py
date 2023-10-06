@@ -129,6 +129,8 @@ class AquaCropModel:
         iwc_layers = len(initial_water_content.value)
         soil_layers = self.soil.nLayer
 
+        print('CB Version of AquaCrop')
+
         # If number of layers in IWC do not match number of soil layers in soil profile, change them to match and warn user of changes made
         if check_iwc_soil_match(iwc_layers, soil_layers) is False:
             new_water_layers = ['FC'] * soil_layers
