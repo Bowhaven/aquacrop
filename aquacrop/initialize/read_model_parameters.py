@@ -135,7 +135,7 @@ def read_model_parameters(
     param_struct.CO2.co2_data_processed = pd.Series(CO2conc_interp, index=sim_years)  # maybe get rid of this
     
     if crop.harvest_date is None:
-        if crop.need_calib==1:
+        if crop.soil_fert_stress==1:
             crop, gdd_cum = compute_crop_calendar(
                 crop,
                 clock_struct.planting_dates,
@@ -159,10 +159,13 @@ def read_model_parameters(
             Kswp_es=crop.Kswp_es
             Ksccx_es=crop.Ksccx_es
             relbio_es=crop.relbio_es
-
+            
+            # stress=1-crop.RelativeBio
+            # TODO: Check back on this, not sure this is exactly how the stress value is calculated in AquaCrop-Win, Han has assumed this I think
             if crop.sfertstress == 0:
-                stress=1-crop.RelativeBio
+                
                 warnings.warn("No user-specified soil fertility stress value, using default estimate: {}".format(stress), stacklevel=1)
+                stress=1-crop.RelativeBio           
             else:
                 stress=crop.sfertstress
 
@@ -211,7 +214,7 @@ def read_model_parameters(
             
 
     # catch exceptions when users specify a crop that triggers soil fert stress calibration when harvest date is also specified (i.e. not GDD mode) 
-    elif crop.need_calib != 0:
+    elif crop.soil_fert_stress != 0:
         raise ValueError('You cannot currently run the soil fertility stress module in calendar days mode, please use GDD mode to continue using soil fertility stress.')
     
 

@@ -16,7 +16,7 @@ irr_mngt = IrrigationManagement(irrigation_method=0)
 Rel=60
 RedaCCx=77
 CCx=96
-maize = Crop('MaizeGDDAQTEST', planting_date='05/01',need_calib=1,
+maize = Crop('MaizeGDDAQTEST', planting_date='05/01',soil_fert_stress=1,
              RelativeBio=Rel/100,Ksccx_in=RedaCCx/CCx,fcdecline_in=1,
              sfertstress=0.72)
 
@@ -99,12 +99,18 @@ plt.figure(figsize=(20,10))
 plt.plot(time,aq.loc[time,'Biomass'],label='Win')
 plt.plot(time,model_results.loc[time,'biomass']/100,label='PY')
 plt.legend()
-# plt.savefig('test_figs\wheat_Biomass_irrmethod{0}_stress{1}.png'.format(IrrMethod,stress))
 plt.show()
 
+# Cumulative Tr
 plt.figure()
 plt.figure(figsize=(20,10))
 plt.plot(time,aq.loc[time,'Tr'],label='Win')
 plt.plot(time,model_results.loc[time,'Tr'],label='PY')
+plt.legend()
+import itertools
+plt.figure()
+plt.figure(figsize=(20,10))
+plt.plot(time,list(itertools.accumulate(aq.loc[time,'Tr'])),label='Win')
+plt.plot(time,list(itertools.accumulate(model_results.loc[time,'Tr'])),label='PY')
 plt.legend()
 plt.show()

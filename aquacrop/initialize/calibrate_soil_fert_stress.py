@@ -355,7 +355,7 @@ def calibrate_soil_fert_stress(
         return Bio_cur
     
     
-    if crop.need_calib==1:
+    if crop.soil_fert_stress==1:
         
         crop.HIGC = calculate_HIGC(
         crop.YldFormCD,
@@ -632,7 +632,7 @@ def calibrate_soil_fert_stress(
                 crop.relbio_es[i+1]=bio_temp/Bio_top
 
 
-    if crop.need_calib==2:
+    if crop.soil_fert_stress==2:
         
         crop.HIGC = calculate_HIGC(
         crop.YldFormCD,

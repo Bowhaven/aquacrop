@@ -16,7 +16,7 @@ irr_mngt = IrrigationManagement(irrigation_method=0)
 Rel=60
 RedaCCx=77
 CCx=96
-wheat = Crop('WheatGDDAQTEST', planting_date='11/01',need_calib=1,
+wheat = Crop('WheatGDDAQTEST', planting_date='11/01',soil_fert_stress=1,
              RelativeBio=Rel/100,Ksccx_in=RedaCCx/CCx,fcdecline_in=1,
              sfertstress=0.57)
 

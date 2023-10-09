@@ -129,15 +129,14 @@ class AquaCropModel:
         iwc_layers = len(initial_water_content.value)
         soil_layers = self.soil.nLayer
 
-        print('CB Version of AquaCrop')
-
+        # CHECK (SOME) INPUTS ARE CORRECT
         # If number of layers in IWC do not match number of soil layers in soil profile, change them to match and warn user of changes made
         if check_iwc_soil_match(iwc_layers, soil_layers) is False:
             new_water_layers = ['FC'] * soil_layers
             new_water_depths = list(range(1, soil_layers+1,1))
             self.initial_water_content.value=new_water_layers
             self.initial_water_content.depth_layer=new_water_depths
-            warnings.warn("Initial water content layers ({}) do not match number of soil layers ({}), initial water content layers now set to: {}".format(iwc_layers, soil_layers,self.initial_water_content.value), stacklevel=1)
+            raise ValueError("Initial water content layers ({}) do not match number of soil layers ({}), initial water content layers now set to: {}".format(iwc_layers, soil_layers,self.initial_water_content.value))
             
         # If need_calib has been specified but not three key args, error:
         if (self.crop.need_calib == 1 and
@@ -145,8 +144,13 @@ class AquaCropModel:
             self.crop.Ksccx_in == 1 and
             self.crop.fcdecline_in == 0
         ):
-            warnings.warn("Soil fertility stress calibration requires specification of RelativeBio, Ksscx_in and fcdecline_in. Please specify these parameters in your crop input and try again.",stacklevel=1)
-            sys.exit()
+            raise ValueError("Soil fertility stress calibration requires specification of RelativeBio, Ksscx_in and fcdecline_in. Please specify these parameters in your crop input and try again.")
+
+        if (0 <= crop.RelativeBio <= 1 or
+            0 <= crop.Ksccx_in <= 1 or
+            0 <= crop.fcdecline_in <= 1
+            ):
+            raise ValueError("Crop fertility stress parameters must all be between 0 and 1 (RelativeBio, Ksccx_in, fcdecline_in)")
 
         self.irrigation_management = irrigation_management
         self.field_management = field_management

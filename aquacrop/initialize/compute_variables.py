@@ -128,7 +128,7 @@ def compute_variables(
         # crop.calculate_additional_params()
 
         # Crop calander
-        if crop.need_calib==1:
+        if crop.soil_fert_stress==1:
             crop, _ = compute_crop_calendar(
                 crop,
                 clock_struct.planting_dates,

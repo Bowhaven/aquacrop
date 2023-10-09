@@ -324,7 +324,7 @@ def compute_crop_calendar(
         else:
             crop.FloweringCD = ModelConstants.NO_VALUE
 
-    if crop.need_calib == 1:
+    if crop.soil_fert_stress == 1:
         return crop, gdd_cum
     else:
         return crop
