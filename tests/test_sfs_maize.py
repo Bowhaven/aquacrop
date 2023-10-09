@@ -22,7 +22,7 @@ maize = Crop('MaizeGDDAQTEST', planting_date='05/01',soil_fert_stress=1,
 
 # Calibration run
 model1 = AquaCropModel(sim_start_time=f'{1986}/05/01',
-                      sim_end_time=f'{1986}/08/30',
+                      sim_end_time=f'{1986}/08/25',
                       weather_df=weather_data,
                       soil=sandy_loam,
                       crop=maize,

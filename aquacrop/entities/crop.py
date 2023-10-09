@@ -77,7 +77,7 @@ class Crop:
         self.CGC_CD=-1
         
         #for soil fertility stress calibration
-        self.need_calib=0 #0， no calibration; 1 yes,default 1 output; 2 all possibilities
+        self.soil_fert_stress=0 #0， no calibration; 1 yes,default 1 output; 2 all possibilities
         self.RelativeBio=1#0-1, 1 for no stress
         self.Ksccx_in=1#0-1, 1 for no stress
         self.fcdecline_in=0 #0 small, 1 medium, 2 large
@@ -200,7 +200,7 @@ class Crop:
             'Kswp',
             'fcdecline',
             'sfertstress',
-            'need_calib',
+            'soil_fert_stress',
             'RelativeBio',
             'Ksccx_in',
             'fcdecline_in',
@@ -369,7 +369,7 @@ crop_spec = [
     ('fcdecline',float64),
     ('sfertstress',float64),
     ('TR_ET0_fertstress', float64),
-    ('need_calib',float64),
+    ('soil_fert_stress',float64),
     ('RelativeBio',float64),
     ('Ksccx_in',float64),
     ('fcdecline_in',float64),
@@ -542,7 +542,7 @@ class CropStruct(object):
         #self.CGC_CD=-1
         
         #for soil fertility stress calibration
-        self.need_calib=0 #1 yes,default 1 output; 2 all possibilities
+        self.soil_fert_stress=0 #1 yes,default 1 output; 2 all possibilities
         self.RelativeBio=1#0-1, 1 for no stress
         self.Ksccx_in=1#0-1, 1 for no stress
         self.fcdecline_in=0 #0 small, 1 medium, 2 large

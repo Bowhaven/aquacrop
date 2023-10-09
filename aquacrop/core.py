@@ -138,17 +138,20 @@ class AquaCropModel:
             self.initial_water_content.depth_layer=new_water_depths
             raise ValueError("Initial water content layers ({}) do not match number of soil layers ({}), initial water content layers now set to: {}".format(iwc_layers, soil_layers,self.initial_water_content.value))
             
-        # If need_calib has been specified but not three key args, error:
-        if (self.crop.need_calib == 1 and
+        # If soil_fert_stress has been specified but not three key args, error:
+        if (self.crop.soil_fert_stress == 1 and
             self.crop.RelativeBio == 1 and
             self.crop.Ksccx_in == 1 and
             self.crop.fcdecline_in == 0
         ):
             raise ValueError("Soil fertility stress calibration requires specification of RelativeBio, Ksscx_in and fcdecline_in. Please specify these parameters in your crop input and try again.")
 
-        if (0 <= crop.RelativeBio <= 1 or
-            0 <= crop.Ksccx_in <= 1 or
-            0 <= crop.fcdecline_in <= 1
+        if (crop.RelativeBio < 0 or
+            crop.RelativeBio > 1 or
+            crop.Ksccx_in < 0 or
+            crop.Ksccx_in > 1 or
+            crop.fcdecline_in < 0 or
+            crop.fcdecline_in > 1 
             ):
             raise ValueError("Crop fertility stress parameters must all be between 0 and 1 (RelativeBio, Ksccx_in, fcdecline_in)")
 
