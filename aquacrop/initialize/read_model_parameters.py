@@ -163,13 +163,13 @@ def read_model_parameters(
             # stress=1-crop.RelativeBio
             # TODO: Check back on this, not sure this is exactly how the stress value is calculated in AquaCrop-Win, Han has assumed this I think
             if crop.sfertstress == 0:
-                
-                warnings.warn("No user-specified soil fertility stress value, using default estimate: {}".format(stress), stacklevel=1)
-                stress=1-crop.RelativeBio           
+                stress=1-crop.RelativeBio 
+                warnings.warn("No user-specified soil fertility stress value, using default estimate: {}".format(stress/100), stacklevel=1)
+                          
             else:
                 stress=crop.sfertstress
 
-            loc_=np.argmin(np.abs(sf_es[0:100]-stress))
+            loc_=np.argmin(np.abs(sf_es[0:100]-stress/100))
 
             # Cont. calculating soil fert stress parameters
             Ksccx=Ksccx_es[loc_]
@@ -186,7 +186,7 @@ def read_model_parameters(
             crop.Ksexpf=1-cgc_/100
             crop.Kswp=1-wp_/100
             crop.fcdecline=dcc_/100
-            crop.sfertstress=stress
+            crop.sfertstress=stress/100
             crop.sf_es=sf_es
             crop.Ksexpf_es=Ksexpf_es
             crop.fcdecline_es=fcdecline_es
@@ -194,17 +194,17 @@ def read_model_parameters(
             crop.Ksccx_es=Ksccx_es
             crop.relbio_es=relbio_es
 
-            print(f'Ksccx = {Ksccx}')
-            print(f'Ksexpf = {Ksexpf}')
-            print(f'Kswp = {Kswp}')
-            print(f'fcdecline = {fcdecline}')
-            print(f'sfertstress = {stress}')
-            print(f'sf_es = {sf_es}')
-            print(f'Ksexpf_es = {Ksexpf_es}')
-            print(f'fcdecline_es = {fcdecline_es}')
-            print(f'Kswp_es = {Kswp_es}')
-            print(f'Ksccx_es = {Ksccx_es}')
-            print(f'relbio_es = {relbio_es}')
+            print(f'Ksccx = {crop.Ksccx}')
+            print(f'Ksexpf = {crop.Ksexpf}')
+            print(f'Kswp = {crop.Kswp}')
+            print(f'fcdecline = {crop.fcdecline}')
+            print(f'sfertstress = {crop.stress}')
+            print(f'sf_es = {crop.sf_es}')
+            print(f'Ksexpf_es = {crop.Ksexpf_es}')
+            print(f'fcdecline_es = {crop.fcdecline_es}')
+            print(f'Kswp_es = {crop.Kswp_es}')
+            print(f'Ksccx_es = {crop.Ksccx_es}')
+            print(f'relbio_es = {crop.relbio_es}')
             
         else:
             crop = compute_crop_calendar(
