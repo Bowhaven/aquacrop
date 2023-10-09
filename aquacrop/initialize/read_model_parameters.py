@@ -176,16 +176,18 @@ def read_model_parameters(
             Ksexpf=Ksexpf_es[loc_]
             Kswp=Kswp_es[loc_]
             fcdecline=fcdecline_es[loc_]
+
+            # think there is no point to any of these, just confusing logic
             ccx_=(1-Ksccx)*100
             cgc_=(1-Ksexpf)*100
-            dcc_=fcdecline*10000/100
+            dcc_=fcdecline*10000/100 # this is particularly wild, is this definitely correct (i.e. multiply by 100)?
             wp_=(1-Kswp)*100
 
             # Set calibrated soil fert stress parameters for crop
-            crop.Ksccx=1-ccx_/100
-            crop.Ksexpf=1-cgc_/100
-            crop.Kswp=1-wp_/100
-            crop.fcdecline=dcc_/100
+            crop.Ksccx=Ksccx
+            crop.Ksexpf=Ksexpf
+            crop.Kswp=Kswp
+            crop.fcdecline=fcdecline*100
             crop.sfertstress=stress/100
             crop.sf_es=sf_es
             crop.Ksexpf_es=Ksexpf_es
@@ -194,11 +196,12 @@ def read_model_parameters(
             crop.Ksccx_es=Ksccx_es
             crop.relbio_es=relbio_es
 
+            print(f'loc_ = {loc_}')
             print(f'Ksccx = {crop.Ksccx}')
             print(f'Ksexpf = {crop.Ksexpf}')
             print(f'Kswp = {crop.Kswp}')
             print(f'fcdecline = {crop.fcdecline}')
-            print(f'sfertstress = {crop.stress}')
+            print(f'sfertstress = {crop.sfertstress}')
             print(f'sf_es = {crop.sf_es}')
             print(f'Ksexpf_es = {crop.Ksexpf_es}')
             print(f'fcdecline_es = {crop.fcdecline_es}')
