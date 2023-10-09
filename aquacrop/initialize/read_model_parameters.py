@@ -174,7 +174,7 @@ def read_model_parameters(
             plt.rcParams.update({'font.size': 22})
             plt.plot(sf_es[1:100], relbio_es[1:100])
 
-            loc_=np.argmin(np.abs(sf_es[0:100]-(stress/100)))
+            loc_=np.argmin(np.abs(sf_es[0:100]-(stress)))
 
             # Cont. calculating soil fert stress parameters
             Ksccx=Ksccx_es[loc_]
