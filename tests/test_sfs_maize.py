@@ -18,7 +18,7 @@ RedaCCx=77
 CCx=96
 maize = Crop('MaizeGDDAQTEST', planting_date='05/01',soil_fert_stress=1,
              RelativeBio=Rel/100,Ksccx_in=RedaCCx/CCx,fcdecline_in=1,
-             sfertstress=0.72)
+             sfertstress=72)
 
 # Calibration run
 model1 = AquaCropModel(sim_start_time=f'{1986}/05/01',

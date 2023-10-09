@@ -162,14 +162,19 @@ def read_model_parameters(
             
             # stress=1-crop.RelativeBio
             # TODO: Check back on this, not sure this is exactly how the stress value is calculated in AquaCrop-Win, Han has assumed this I think
-            if crop.sfertstress == 0:
-                stress=1-crop.RelativeBio 
-                warnings.warn("No user-specified soil fertility stress value, using default estimate: {}".format(stress/100), stacklevel=1)
-                          
+            if crop.sfertstress == 0: 
+
+                raise ValueError("No user-specified soil fertility stress value, no default available.", stacklevel=1)
+                 
             else:
                 stress=crop.sfertstress
 
-            loc_=np.argmin(np.abs(sf_es[0:100]-stress/100))
+            import matplotlib.pyplot as plt
+            plt.figure(figsize=(20,10))
+            plt.rcParams.update({'font.size': 22})
+            plt.plot(sf_es[1:100], relbio_es[1:100])
+
+            loc_=np.argmin(np.abs(sf_es[0:100]-(stress/100)))
 
             # Cont. calculating soil fert stress parameters
             Ksccx=Ksccx_es[loc_]
@@ -187,8 +192,7 @@ def read_model_parameters(
             crop.Ksccx=Ksccx
             crop.Ksexpf=Ksexpf
             crop.Kswp=Kswp
-            crop.fcdecline=fcdecline*100
-            crop.sfertstress=stress/100
+            crop.fcdecline=fcdecline
             crop.sf_es=sf_es
             crop.Ksexpf_es=Ksexpf_es
             crop.fcdecline_es=fcdecline_es
