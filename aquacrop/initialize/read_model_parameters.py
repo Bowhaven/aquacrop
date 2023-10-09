@@ -193,10 +193,21 @@ def read_model_parameters(
             crop.Kswp_es=Kswp_es
             crop.Ksccx_es=Ksccx_es
             crop.relbio_es=relbio_es
-            
 
+            print(f'Ksccx = {Ksccx}')
+            print(f'Ksexpf = {Ksexpf}')
+            print(f'Kswp = {Kswp}')
+            print(f'fcdecline = {fcdecline}')
+            print(f'sfertstress = {stress}')
+            print(f'sf_es = {sf_es}')
+            print(f'Ksexpf_es = {Ksexpf_es}')
+            print(f'fcdecline_es = {fcdecline_es}')
+            print(f'Kswp_es = {Kswp_es}')
+            print(f'Ksccx_es = {Ksccx_es}')
+            print(f'relbio_es = {relbio_es}')
+            
         else:
-            crop,_ = compute_crop_calendar(
+            crop = compute_crop_calendar(
                 crop,
                 clock_struct.planting_dates,
                 clock_struct.simulation_start_date,
