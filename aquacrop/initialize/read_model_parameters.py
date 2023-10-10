@@ -152,6 +152,23 @@ def read_model_parameters(
                 param_struct
             ) # I think this is equivalent to the '_initialize()' call in the test notebooks
 
+            if crop.Ksccx<1 or crop.Ksexpf<1:
+                if crop.CGC_CD==-1:
+                    crop.CGC_CD=crop.MaxCanopy/crop.MaxCanopyCD*crop.CGC
+                    
+                crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
+                                                                            /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
+
+                if crop.MaxCanopyCD>crop.CanopyDevEndCD:
+                    while crop.MaxCanopyCD>crop.CanopyDevEndCD and crop.Ksexpf<1:
+                        crop.Ksexpf=crop.Ksexpf+0.01
+                        crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
+                                                                        /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
+                    while crop.MaxCanopyCD>crop.CanopyDevEndCD and crop.CCx*crop.Ksccx>0.1 and crop.Ksccx>0.5:
+                        crop.Ksccx=crop.Ksccx-0.01
+                        crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
+                                                                        /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
+
             # Calculate soil fert stress parameters
             sf_es=crop.sf_es
             Ksexpf_es=crop.Ksexpf_es
@@ -168,11 +185,6 @@ def read_model_parameters(
                  
             else:
                 stress=crop.sfertstress # Tim wants this to no longer be a user-specified variable, but instead always the default 1-relbio, but for testing purposes, keep this for now
-
-            import matplotlib.pyplot as plt
-            plt.figure(figsize=(20,10))
-            plt.rcParams.update({'font.size': 22})
-            plt.plot(sf_es[1:100], relbio_es[1:100])
 
             loc_=np.argmin(np.abs(sf_es[0:100]-(stress)))
 
@@ -213,29 +225,9 @@ def read_model_parameters(
             # print(f'Ksccx_es = {crop.Ksccx_es}')
             # print(f'relbio_es = {crop.relbio_es}')
 
-            if crop.Ksccx<1 or crop.Ksexpf<1:
-                if crop.CGC_CD==-1:
-                    crop.CGC_CD=crop.MaxCanopy/crop.MaxCanopyCD*crop.CGC
-                    
-                crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
-                                                                            /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
-
-                if crop.MaxCanopyCD>crop.CanopyDevEndCD:
-                    while crop.MaxCanopyCD>crop.CanopyDevEndCD and crop.Ksexpf<1:
-                        crop.Ksexpf=crop.Ksexpf+0.01
-                        crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
-                                                                        /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
-                    while crop.MaxCanopyCD>crop.CanopyDevEndCD and crop.CCx*crop.Ksccx>0.1 and crop.Ksccx>0.5:
-                        crop.Ksccx=crop.Ksccx-0.01
-                        crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
-                                                                        /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
             
-            print(f'loc_ = {loc_}')
-            print(f'Ksccx2 = {crop.Ksccx}')
-            print(f'Ksexpf2 = {crop.Ksexpf}')
-            print(f'Kswp2 = {crop.Kswp}')
-            print(f'fcdecline2 = {crop.fcdecline}')
-            print(f'sfertstress2 = {crop.sfertstress}')
+            
+            
             # print(f'sf_es = {crop.sf_es}')
             # print(f'Ksexpf_es = {crop.Ksexpf_es}')
             # print(f'fcdecline_es = {crop.fcdecline_es}')
@@ -252,18 +244,44 @@ def read_model_parameters(
                 param_struct,#for soil fertility stress
             )
 
-            print(f'Ksccx3 = {crop.Ksccx}')
-            print(f'Ksexpf3 = {crop.Ksexpf}')
-            print(f'Kswp3 = {crop.Kswp}')
-            print(f'fcdecline3 = {crop.fcdecline}')
-            print(f'sfertstress3 = {crop.sfertstress}')
+            print(f'loc_ = {loc_}')
+            print(f'Ksccx2 = {crop.Ksccx}')
+            print(f'Ksexpf2 = {crop.Ksexpf}')
+            print(f'Kswp2 = {crop.Kswp}')
+            print(f'fcdecline2 = {crop.fcdecline}')
+            print(f'sfertstress2 = {crop.sfertstress}')
 
             # once compute_crop_calendar has completed, run soil fert stress calibration
             crop = calibrate_soil_fert_stress(
                 crop,
                 gdd_cum,
                 param_struct
-            ) # I think this is equivalent to the '_initialize()' call in the test notebooks
+            )
+
+            print(f'Ksccx3 = {crop.Ksccx}')
+            print(f'Ksexpf3 = {crop.Ksexpf}')
+            print(f'Kswp3 = {crop.Kswp}')
+            print(f'fcdecline3 = {crop.fcdecline}')
+            print(f'sfertstress3 = {crop.sfertstress}')
+
+            #look unnecessary, but cannot get the same results with AquaCrop-win without it
+            if crop.Ksccx<1 or crop.Ksexpf<1:
+                if crop.CGC_CD==-1:
+                    crop.CGC_CD=crop.MaxCanopy/crop.MaxCanopyCD*crop.CGC
+                    
+                crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
+                                                                            /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
+
+                if crop.MaxCanopyCD>crop.CanopyDevEndCD:
+                    while crop.MaxCanopyCD>crop.CanopyDevEndCD and crop.Ksexpf<1:
+                        crop.Ksexpf=crop.Ksexpf+0.01
+                        crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
+                                                                        /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
+                    while crop.MaxCanopyCD>crop.CanopyDevEndCD and crop.CCx*crop.Ksccx>0.1 and crop.Ksccx>0.5:
+                        crop.Ksccx=crop.Ksccx-0.01
+                        crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
+                                                                        /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
+                crop.MaxCanopy=gdd_cum.values[crop.MaxCanopyCD-1]  
 
             print(f'Ksccx4 = {crop.Ksccx}')
             print(f'Ksexpf4 = {crop.Ksexpf}')

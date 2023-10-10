@@ -633,24 +633,24 @@ def calibrate_soil_fert_stress(
                 crop.Kswp_es[i+1]=Kswp_temp
                 crop.relbio_es[i+1]=bio_temp/Bio_top
 
-    #look unnecessary, but cannot get the same results with AquaCrop-win without it
-    if crop.Ksccx<1 or crop.Ksexpf<1:
-        if crop.CGC_CD==-1:
-            crop.CGC_CD=crop.MaxCanopy/crop.MaxCanopyCD*crop.CGC
-            
-        crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
-                                                                    /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
+        #look unnecessary, but cannot get the same results with AquaCrop-win without it
+        if crop.Ksccx<1 or crop.Ksexpf<1:
+            if crop.CGC_CD==-1:
+                crop.CGC_CD=crop.MaxCanopy/crop.MaxCanopyCD*crop.CGC
+                
+            crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
+                                                                        /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
 
-        if crop.MaxCanopyCD>crop.CanopyDevEndCD:
-            while crop.MaxCanopyCD>crop.CanopyDevEndCD and crop.Ksexpf<1:
-                crop.Ksexpf=crop.Ksexpf+0.01
-                crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
-                                                                /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
-            while crop.MaxCanopyCD>crop.CanopyDevEndCD and crop.CCx*crop.Ksccx>0.1 and crop.Ksccx>0.5:
-                crop.Ksccx=crop.Ksccx-0.01
-                crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
-                                                                /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
-        crop.MaxCanopy=gdd_cum.values[crop.MaxCanopyCD-1]  
+            if crop.MaxCanopyCD>crop.CanopyDevEndCD:
+                while crop.MaxCanopyCD>crop.CanopyDevEndCD and crop.Ksexpf<1:
+                    crop.Ksexpf=crop.Ksexpf+0.01
+                    crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
+                                                                    /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
+                while crop.MaxCanopyCD>crop.CanopyDevEndCD and crop.CCx*crop.Ksccx>0.1 and crop.Ksccx>0.5:
+                    crop.Ksccx=crop.Ksccx-0.01
+                    crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
+                                                                    /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
+            crop.MaxCanopy=gdd_cum.values[crop.MaxCanopyCD-1]  
 
 
     if crop.soil_fert_stress==2:
