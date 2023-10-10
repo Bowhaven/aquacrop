@@ -348,4 +348,4 @@ def read_model_parameters(
         clock_struct.season_counter = -1
 
     # return the FileLocations object as i have added some elements
-    return clock_struct, param_struct
+    return clock_struct, param_struct, crop
