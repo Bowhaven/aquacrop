@@ -265,43 +265,6 @@ def read_model_parameters(
                 param_struct
             ) # I think this is equivalent to the '_initialize()' call in the test notebooks
 
-            # Calculate soil fert stress parameters
-            sf_es=crop.sf_es
-            Ksexpf_es=crop.Ksexpf_es
-            fcdecline_es=crop.fcdecline_es
-            Kswp_es=crop.Kswp_es
-            Ksccx_es=crop.Ksccx_es
-            relbio_es=crop.relbio_es
-            
-            # stress=1-crop.RelativeBio
-            # TODO: Check back on this, not sure this is exactly how the stress value is calculated in AquaCrop-Win
-            if crop.sfertstress == 0: 
-
-                raise ValueError("No user-specified soil fertility stress value, no default available.", stacklevel=1)
-                 
-            else:
-                stress=crop.sfertstress # Tim wants this to no longer be a user-specified variable, but instead always the default 1-relbio, but for testing purposes, keep this for now
-
-            loc_=np.argmin(np.abs(sf_es[0:100]-(stress)))
-
-            # Cont. calculating soil fert stress parameters
-            Ksccx=Ksccx_es[loc_]
-            Ksexpf=Ksexpf_es[loc_]
-            Kswp=Kswp_es[loc_]
-            fcdecline=fcdecline_es[loc_]
-
-            # Set calibrated soil fert stress parameters for crop
-            crop.Ksccx=Ksccx
-            crop.Ksexpf=Ksexpf
-            crop.Kswp=Kswp
-            crop.fcdecline=fcdecline
-            crop.sf_es=sf_es
-            crop.Ksexpf_es=Ksexpf_es
-            crop.fcdecline_es=fcdecline_es
-            crop.Kswp_es=Kswp_es
-            crop.Ksccx_es=Ksccx_es
-            crop.relbio_es=relbio_es
-
             print(f'Ksccx4 = {crop.Ksccx}')
             print(f'Ksexpf4 = {crop.Ksexpf}')
             print(f'Kswp4 = {crop.Kswp}')
