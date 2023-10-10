@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 from .calculate_HIGC import calculate_HIGC
 from .calculate_HI_linear import calculate_HI_linear
-from compute_crop_calendar import Biomas_ini_es
+from .compute_crop_calendar import Biomas_ini_es
 
 def calibrate_soil_fert_stress(
     crop: "Crop",
