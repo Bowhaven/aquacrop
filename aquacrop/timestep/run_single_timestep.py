@@ -174,8 +174,6 @@ def solution_single_time_step(
         key: value
         for key, value in Crop_.__dict__.items()
         if not key.startswith("__") and not callable(key)}
-    
-    print(f'Class args= {class_args}')
             
     Crop = CropStructNT(**class_args)
     
@@ -315,14 +313,10 @@ def solution_single_time_step(
     # 10. Update growth stage
     NewCond = growth_stage(Crop, NewCond, growing_season)
 
-    print(f'Pre-11. Canopy cover, Crop.Ksexpf = {Crop.Ksexpf}')
-
     # 11. Canopy cover development
     NewCond = canopy_cover(
         Crop, Soil.Profile, Soil.z_top, NewCond, gdd, et0, growing_season
     )
-
-    print(f'Post-11. Canopy cover, Crop.Ksexpf = {Crop.Ksexpf}')
 
     # 12. Soil evaporation
     (

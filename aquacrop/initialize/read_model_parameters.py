@@ -135,7 +135,7 @@ def read_model_parameters(
     param_struct.CO2.co2_data_processed = pd.Series(CO2conc_interp, index=sim_years)  # maybe get rid of this
     
     if crop.harvest_date is None:
-        if crop.soil_fert_stress==1:
+        if crop.soil_fert_stress==1: # think this needs some work to check that CalendarType is 2 (GDD) not 1 (CD)
             crop, gdd_cum = compute_crop_calendar(
                 crop,
                 clock_struct.planting_dates,
@@ -161,13 +161,13 @@ def read_model_parameters(
             relbio_es=crop.relbio_es
             
             # stress=1-crop.RelativeBio
-            # TODO: Check back on this, not sure this is exactly how the stress value is calculated in AquaCrop-Win, Han has assumed this I think
+            # TODO: Check back on this, not sure this is exactly how the stress value is calculated in AquaCrop-Win
             if crop.sfertstress == 0: 
 
                 raise ValueError("No user-specified soil fertility stress value, no default available.", stacklevel=1)
                  
             else:
-                stress=crop.sfertstress
+                stress=crop.sfertstress # Tim wants this to no longer be a user-specified variable, but instead always the default 1-relbio, but for testing purposes, keep this for now
 
             import matplotlib.pyplot as plt
             plt.figure(figsize=(20,10))
@@ -242,6 +242,16 @@ def read_model_parameters(
             print(f'Kswp_es = {crop.Kswp_es}')
             print(f'Ksccx_es = {crop.Ksccx_es}')
             print(f'relbio_es = {crop.relbio_es}')
+
+            crop, gdd_cum = compute_crop_calendar( # if this works, can remove the following else block and simply add it after this if block
+                crop,
+                clock_struct.planting_dates,
+                clock_struct.simulation_start_date,
+                clock_struct.time_span,
+                weather_df,
+                param_struct,#for soil fertility stress
+            )
+
         else:
             crop = compute_crop_calendar(
                 crop,

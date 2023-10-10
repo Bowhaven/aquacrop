@@ -156,7 +156,6 @@ def canopy_cover(
                 # print(Crop.CC0,np.exp(Crop.CGC*dtCC))
             else:
                 # Canopy growing
-                print(f'Canopy cover Crop.Ksexpf = {Crop.Ksexpf}')
                 tmp_tCC = tCCadj - Crop.Emergence
                 NewCond.canopy_cover_ns = cc_development(Crop.CC0,0.98*Crop.CCx*Crop.Ksccx,\
                                                 Crop.CGC*Crop.Ksexpf,Crop.CDC,tmp_tCC,'Growth',Crop.CCx*Crop.Ksccx)
