@@ -129,7 +129,7 @@ def compute_variables(
 
         # Crop calander
         if crop.soil_fert_stress==1:
-            crop, _ = compute_crop_calendar(
+            crop, _, _ = compute_crop_calendar(
                 crop,
                 clock_struct.planting_dates,
                 clock_struct.simulation_start_date,

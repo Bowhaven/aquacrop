@@ -15,6 +15,7 @@ from .calculate_HI_linear import calculate_HI_linear
 def calibrate_soil_fert_stress(
     crop: "Crop",
     gdd_cum: "pd.Series",
+    Ksc_Total: "pd.Series",
     ParamStruct: "ParamStruct",
 ) -> "Crop":
     """

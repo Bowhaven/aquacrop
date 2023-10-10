@@ -505,6 +505,6 @@ def compute_crop_calendar(
         crop.Bio_top[len(Ksc_Total):len(Ksc_Total)+100]=Bio_top
 
     if crop.soil_fert_stress == 1:
-        return crop, gdd_cum
+        return crop, gdd_cum, Ksc_Total
     else:
         return crop
