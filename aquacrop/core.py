@@ -241,7 +241,7 @@ class AquaCropModel:
         self.weather_df = read_weather_inputs(self._clock_struct, self.weather_df)
 
         # read model params
-        self._clock_struct, self._param_struct, self.crop = read_model_parameters(
+        self._clock_struct, self._param_struct = read_model_parameters(
             self._clock_struct, self.soil, self.crop, self.weather_df
         )
 

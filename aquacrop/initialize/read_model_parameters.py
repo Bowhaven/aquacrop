@@ -217,23 +217,6 @@ def read_model_parameters(
             print(f'Ksexpf1 = {crop.Ksexpf}')
             print(f'Kswp1 = {crop.Kswp}')
             print(f'fcdecline1 = {crop.fcdecline}')
-            # print(f'sfertstress = {crop.sfertstress}')
-            # print(f'sf_es = {crop.sf_es}')
-            # print(f'Ksexpf_es = {crop.Ksexpf_es}')
-            # print(f'fcdecline_es = {crop.fcdecline_es}')
-            # print(f'Kswp_es = {crop.Kswp_es}')
-            # print(f'Ksccx_es = {crop.Ksccx_es}')
-            # print(f'relbio_es = {crop.relbio_es}')
-
-            
-            
-            
-            # print(f'sf_es = {crop.sf_es}')
-            # print(f'Ksexpf_es = {crop.Ksexpf_es}')
-            # print(f'fcdecline_es = {crop.fcdecline_es}')
-            # print(f'Kswp_es = {crop.Kswp_es}')
-            # print(f'Ksccx_es = {crop.Ksccx_es}')
-            # print(f'relbio_es = {crop.relbio_es}')
 
             crop, gdd_cum = compute_crop_calendar( # if this works, can remove the following else block and simply add it after this if block
                 crop,
@@ -265,23 +248,23 @@ def read_model_parameters(
             print(f'sfertstress3 = {crop.sfertstress}')
 
             #look unnecessary, but cannot get the same results with AquaCrop-win without it
-            if crop.Ksccx<1 or crop.Ksexpf<1:
-                if crop.CGC_CD==-1:
-                    crop.CGC_CD=crop.MaxCanopy/crop.MaxCanopyCD*crop.CGC
+            # if crop.Ksccx<1 or crop.Ksexpf<1:
+            #     if crop.CGC_CD==-1:
+            #         crop.CGC_CD=crop.MaxCanopy/crop.MaxCanopyCD*crop.CGC
                     
-                crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
-                                                                            /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
+            #     crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
+            #                                                                 /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
 
-                if crop.MaxCanopyCD>crop.CanopyDevEndCD:
-                    while crop.MaxCanopyCD>crop.CanopyDevEndCD and crop.Ksexpf<1:
-                        crop.Ksexpf=crop.Ksexpf+0.01
-                        crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
-                                                                        /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
-                    while crop.MaxCanopyCD>crop.CanopyDevEndCD and crop.CCx*crop.Ksccx>0.1 and crop.Ksccx>0.5:
-                        crop.Ksccx=crop.Ksccx-0.01
-                        crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
-                                                                        /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
-                crop.MaxCanopy=gdd_cum.values[crop.MaxCanopyCD-1]  
+            #     if crop.MaxCanopyCD>crop.CanopyDevEndCD:
+            #         while crop.MaxCanopyCD>crop.CanopyDevEndCD and crop.Ksexpf<1:
+            #             crop.Ksexpf=crop.Ksexpf+0.01
+            #             crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
+            #                                                             /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
+            #         while crop.MaxCanopyCD>crop.CanopyDevEndCD and crop.CCx*crop.Ksccx>0.1 and crop.Ksccx>0.5:
+            #             crop.Ksccx=crop.Ksccx-0.01
+            #             crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
+            #                                                             /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
+            #     crop.MaxCanopy=gdd_cum.values[crop.MaxCanopyCD-1]  
 
             print(f'Ksccx4 = {crop.Ksccx}')
             print(f'Ksexpf4 = {crop.Ksexpf}')
@@ -395,4 +378,4 @@ def read_model_parameters(
         clock_struct.season_counter = -1
 
     # return the FileLocations object as i have added some elements
-    return clock_struct, param_struct, crop
+    return clock_struct, param_struct
