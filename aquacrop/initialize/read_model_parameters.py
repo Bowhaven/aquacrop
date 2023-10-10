@@ -201,17 +201,17 @@ def read_model_parameters(
             crop.relbio_es=relbio_es
 
             print(f'loc_ = {loc_}')
-            print(f'Ksccx = {crop.Ksccx}')
-            print(f'Ksexpf = {crop.Ksexpf}')
-            print(f'Kswp = {crop.Kswp}')
-            print(f'fcdecline = {crop.fcdecline}')
-            print(f'sfertstress = {crop.sfertstress}')
-            print(f'sf_es = {crop.sf_es}')
-            print(f'Ksexpf_es = {crop.Ksexpf_es}')
-            print(f'fcdecline_es = {crop.fcdecline_es}')
-            print(f'Kswp_es = {crop.Kswp_es}')
-            print(f'Ksccx_es = {crop.Ksccx_es}')
-            print(f'relbio_es = {crop.relbio_es}')
+            print(f'Ksccx1 = {crop.Ksccx}')
+            print(f'Ksexpf1 = {crop.Ksexpf}')
+            print(f'Kswp1 = {crop.Kswp}')
+            print(f'fcdecline1 = {crop.fcdecline}')
+            # print(f'sfertstress = {crop.sfertstress}')
+            # print(f'sf_es = {crop.sf_es}')
+            # print(f'Ksexpf_es = {crop.Ksexpf_es}')
+            # print(f'fcdecline_es = {crop.fcdecline_es}')
+            # print(f'Kswp_es = {crop.Kswp_es}')
+            # print(f'Ksccx_es = {crop.Ksccx_es}')
+            # print(f'relbio_es = {crop.relbio_es}')
 
             if crop.Ksccx<1 or crop.Ksexpf<1:
                 if crop.CGC_CD==-1:
@@ -231,17 +231,17 @@ def read_model_parameters(
                                                                         /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
             
             print(f'loc_ = {loc_}')
-            print(f'Ksccx = {crop.Ksccx}')
-            print(f'Ksexpf = {crop.Ksexpf}')
-            print(f'Kswp = {crop.Kswp}')
-            print(f'fcdecline = {crop.fcdecline}')
-            print(f'sfertstress = {crop.sfertstress}')
-            print(f'sf_es = {crop.sf_es}')
-            print(f'Ksexpf_es = {crop.Ksexpf_es}')
-            print(f'fcdecline_es = {crop.fcdecline_es}')
-            print(f'Kswp_es = {crop.Kswp_es}')
-            print(f'Ksccx_es = {crop.Ksccx_es}')
-            print(f'relbio_es = {crop.relbio_es}')
+            print(f'Ksccx2 = {crop.Ksccx}')
+            print(f'Ksexpf2 = {crop.Ksexpf}')
+            print(f'Kswp2 = {crop.Kswp}')
+            print(f'fcdecline2 = {crop.fcdecline}')
+            print(f'sfertstress2 = {crop.sfertstress}')
+            # print(f'sf_es = {crop.sf_es}')
+            # print(f'Ksexpf_es = {crop.Ksexpf_es}')
+            # print(f'fcdecline_es = {crop.fcdecline_es}')
+            # print(f'Kswp_es = {crop.Kswp_es}')
+            # print(f'Ksccx_es = {crop.Ksccx_es}')
+            # print(f'relbio_es = {crop.relbio_es}')
 
             crop, gdd_cum = compute_crop_calendar( # if this works, can remove the following else block and simply add it after this if block
                 crop,
@@ -251,6 +251,62 @@ def read_model_parameters(
                 weather_df,
                 param_struct,#for soil fertility stress
             )
+
+            print(f'Ksccx3 = {crop.Ksccx}')
+            print(f'Ksexpf3 = {crop.Ksexpf}')
+            print(f'Kswp3 = {crop.Kswp}')
+            print(f'fcdecline3 = {crop.fcdecline}')
+            print(f'sfertstress3 = {crop.sfertstress}')
+
+            # once compute_crop_calendar has completed, run soil fert stress calibration
+            crop = calibrate_soil_fert_stress(
+                crop,
+                gdd_cum,
+                param_struct
+            ) # I think this is equivalent to the '_initialize()' call in the test notebooks
+
+            # Calculate soil fert stress parameters
+            sf_es=crop.sf_es
+            Ksexpf_es=crop.Ksexpf_es
+            fcdecline_es=crop.fcdecline_es
+            Kswp_es=crop.Kswp_es
+            Ksccx_es=crop.Ksccx_es
+            relbio_es=crop.relbio_es
+            
+            # stress=1-crop.RelativeBio
+            # TODO: Check back on this, not sure this is exactly how the stress value is calculated in AquaCrop-Win
+            if crop.sfertstress == 0: 
+
+                raise ValueError("No user-specified soil fertility stress value, no default available.", stacklevel=1)
+                 
+            else:
+                stress=crop.sfertstress # Tim wants this to no longer be a user-specified variable, but instead always the default 1-relbio, but for testing purposes, keep this for now
+
+            loc_=np.argmin(np.abs(sf_es[0:100]-(stress)))
+
+            # Cont. calculating soil fert stress parameters
+            Ksccx=Ksccx_es[loc_]
+            Ksexpf=Ksexpf_es[loc_]
+            Kswp=Kswp_es[loc_]
+            fcdecline=fcdecline_es[loc_]
+
+            # Set calibrated soil fert stress parameters for crop
+            crop.Ksccx=Ksccx
+            crop.Ksexpf=Ksexpf
+            crop.Kswp=Kswp
+            crop.fcdecline=fcdecline
+            crop.sf_es=sf_es
+            crop.Ksexpf_es=Ksexpf_es
+            crop.fcdecline_es=fcdecline_es
+            crop.Kswp_es=Kswp_es
+            crop.Ksccx_es=Ksccx_es
+            crop.relbio_es=relbio_es
+
+            print(f'Ksccx4 = {crop.Ksccx}')
+            print(f'Ksexpf4 = {crop.Ksexpf}')
+            print(f'Kswp4 = {crop.Kswp}')
+            print(f'fcdecline4 = {crop.fcdecline}')
+            print(f'sfertstress4 = {crop.sfertstress}')
 
         else:
             crop = compute_crop_calendar(
