@@ -136,7 +136,7 @@ def read_model_parameters(
     
     if crop.harvest_date is None:
         if crop.soil_fert_stress==1: # think this needs some work to check that CalendarType is 2 (GDD) not 1 (CD)
-            crop, gdd_cum = compute_crop_calendar(
+            crop, gdd_cum, Ksc_total, Ks_tr = compute_crop_calendar(
                 crop,
                 clock_struct.planting_dates,
                 clock_struct.simulation_start_date,
@@ -148,7 +148,9 @@ def read_model_parameters(
             # once compute_crop_calendar has completed, run soil fert stress calibration
             crop = calibrate_soil_fert_stress(
                 crop,
-                gdd_cum,
+                gdd_cum, 
+                Ksc_total, 
+                Ks_tr,
                 param_struct
             ) # I think this is equivalent to the '_initialize()' call in the test notebooks
 
