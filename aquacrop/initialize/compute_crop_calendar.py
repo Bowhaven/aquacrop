@@ -504,7 +504,136 @@ def compute_crop_calendar(
                 Bio_top+= Ksc_Total[i_]
         crop.Bio_top[len(Ksc_Total):len(Ksc_Total)+100]=Bio_top
 
+        # Start by defining a function that was previously in compute_crop_calendar but is only required within this function:
+        def Biomas_ini_es(Bio_mul,TopStress,Ksccx_temp,Ksexpf_temp,fcdecline_temp,Kswp_temp):
+                    CCx=crop.CCx*Ksccx_temp
+                
+                    CGC=crop.CGC*Ksexpf_temp
+                    
+                    Half_CCx = round(crop.Emergence+(np.log(0.5*CCx/crop.CC0)/CGC))
+                    
+                    
+                    Full_CCx = round(crop.Emergence+(np.log((0.25*CCx*CCx/crop.CC0)
+                                                                                /(CCx-(0.98*CCx)))/CGC))
+                    
+                    if gdd_cum.values[-1] < crop.Maturity:
+                        Half_CCx = Half_CCx*gdd_cum.values[-1]/crop.Maturity
+                        Full_CCx = Full_CCx*gdd_cum.values[-1]/crop.Maturity
+
+                    Half_CCxCD = (gdd_cum>Half_CCx).idxmax()+1 # isn't used, so why is it defined?
+                    Full_CCxCD = (gdd_cum>Full_CCx).idxmax()+1
+
+                    Kc_Tr_es=[]# crop transpiration coefficient with soil fertility stress 
+                    max_cc=0
+
+                    for day_ in range(1,np.min([crop.MaturityCD+1,len(gdd_cum)])):
+
+                        # crop transpiration coefficient
+                        if gdd_cum.values[day_]<crop.Emergence:
+                            CC=0
+                            Kctr=crop.Kcb
+                        
+                        elif gdd_cum.values[day_] <= Half_CCx:
+                            CC=crop.CC0*np.exp((gdd_cum.values[day_]-crop.Emergence)*CGC)
+                            if CC>CCx/2:
+                                CC=CCx-0.25*CCx*CCx/crop.CC0*np.exp(-(gdd_cum.values[day_]-crop.Emergence)*CGC)
+                            Kctr=crop.Kcb
+                            
+                            max_cc=CC
+
+                        elif gdd_cum.values[day_] > Half_CCx and gdd_cum.values[day_] <= Full_CCx:
+                            CC=CCx-0.25*CCx*CCx/crop.CC0*np.exp(-(gdd_cum.values[day_]-crop.Emergence)*CGC)
+                            Kctr=crop.Kcb
+                            
+                            max_cc=CC
+                                
+                        elif gdd_cum.values[day_] > Full_CCx and gdd_cum.values[day_-5] <= Full_CCx:
+                            
+                            if gdd_cum.values[day_]<crop.CanopyDevEnd:
+                                CC=CCx-0.25*CCx*CCx/crop.CC0*np.exp(-(gdd_cum.values[day_]-crop.Emergence)*CGC)
+                                max_cc=CC
+                            else:
+                                CC=max_cc
+
+                            if crop.SenescenceCD>Full_CCxCD:
+                                CC=max_cc-fcdecline_temp*(day_-Full_CCxCD)*(day_-Full_CCxCD)/(crop.SenescenceCD-Full_CCxCD)
+                            Kctr=crop.Kcb
+                            if CC<0:
+                                CC=0
+
+                        elif gdd_cum.values[day_-5] > Full_CCx and gdd_cum.values[day_] <= crop.Senescence:
+                            
+                            if gdd_cum.values[day_]<crop.CanopyDevEnd:
+                                CC=CCx-0.25*CCx*CCx/crop.CC0*np.exp(-(gdd_cum.values[day_]-crop.Emergence)*CGC)
+                                max_cc=CC
+                            else:
+                                CC=max_cc
+
+
+                            if crop.SenescenceCD>Full_CCxCD:
+                                CC=max_cc-fcdecline_temp*(day_-Full_CCxCD)*(day_-Full_CCxCD)/(crop.SenescenceCD-Full_CCxCD)
+                            Kctr=crop.Kcb-(day_-Full_CCxCD-5)*(crop.fage / 100)*max_cc
+                            if CC<0:
+                                CC=0
+
+                        elif gdd_cum.values[day_] > crop.Senescence and gdd_cum.values[day_] <= crop.Maturity:
+                            if crop.SenescenceCD>Full_CCxCD:
+                                CC_fs=max_cc-fcdecline_temp*(day_-Full_CCxCD)*(day_-Full_CCxCD)/(crop.SenescenceCD-Full_CCxCD)
+
+                                CC_adj=max_cc-fcdecline_temp*(crop.SenescenceCD-Full_CCxCD)
+                            else:
+                                CC_fs=max_cc
+                                CC_adj=max_cc
+                            CDC = crop.CDC*((CC_adj+2.29)/(crop.CCx+2.29))
+                            CC=CC_adj*(1-0.05*(np.exp(3.33*CDC*(gdd_cum.values[day_]-crop.Senescence)/(CC_adj+2.29))-1))
+                            
+                            #if CC_fs<CC:#not in AquaCrop v6
+                            #    CC=CC_fs
+                            if CC<0:
+                                CC=0
+                            
+                            Kctr=(crop.Kcb-(day_-Full_CCxCD-5)*(crop.fage / 100)*max_cc)*(CC/max_cc)**crop.a_Tr
+                        
+                        #print(Full_CCxCD)
+                        #print(Kc_Tr_es)
+                        #print(Kc_Tr)
+                        
+                        if CC<=0:
+                            CC=0
+                        CC_star=1.72*CC-CC*CC+0.3*CC*CC*CC
+                        
+                        #print(ParamStruct.CO2.CurrentConc)
+                        try:
+                            CO2conc=ParamStruct.CO2.current_concentration 
+                        except:
+                            CO2conc=ParamStruct.CO2.co2_data_processed.iloc[0]
+                        Kc_TrCo2=1            
+                        if CO2conc>369.41:
+                            Kc_TrCo2=1-0.05*(CO2conc-369.41)/(550-369.41)
+                        
+                        Kc_Tr_=CC_star*Kctr*Kc_TrCo2
+                        #if Kc_Tr_==0:
+                        #    print("Zero"+str(day_))
+                        #    print(CC_star)
+                        #    print(Kctr)
+                        Kc_Tr_es.append(Kc_Tr_)
+
+                    Bio_cur=0
+                    Curstress=0
+                    #print(len(Kc_Tr_es))
+                    #print(len(Kc_Tr))
+                    #print(len(Bio_mul))
+                    for i in range(len(Kc_Tr_es)):
+                        if Curstress<TopStress:
+                            Curstress+=Kc_Tr_es[i]*Ks_Tr[i]
+                            Kswp_=1-(1-Kswp_temp)*(Curstress/TopStress)*(Curstress/TopStress)
+                        else:
+                            Kswp_=1-(1-Kswp_temp)
+                        Bio_cur+=Kswp_*Kc_Tr_es[i]*Ks_Tr[i]*Bio_mul[i]
+                    
+                    return Bio_cur
+
     if crop.soil_fert_stress == 1:
-        return crop, gdd_cum, Ksc_Total
+        return crop, gdd_cum
     else:
         return crop
