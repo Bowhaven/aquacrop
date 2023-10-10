@@ -279,8 +279,6 @@ class AquaCropModel:
         # save model _weather to _init_cond
         self._weather = self.weather_df.values
 
-        print(f'End of initialisation self.crop.Ksexpf = {self.crop.Ksexpf}')
-
     def run_model(
         self,
         num_steps: int = 1,
@@ -358,8 +356,6 @@ class AquaCropModel:
         """
         Function to run a single time-step (day) calculation of AquaCrop-OS
         """
-        print(f'Start of timestep self.crop.Ksexpf = {self.crop.Ksexpf}')
-
         # extract _weather data for current timestep
         weather_step = _weather_data_current_timestep(
             self._weather, self._clock_struct.time_step_counter
@@ -405,8 +401,6 @@ class AquaCropModel:
                 outputs.water_storage,
                 outputs.crop_growth,
             ) = final_water_flux_growth_outputs
-
-        print(f'End of timestep self.crop.Ksexpf = {self.crop.Ksexpf}')
 
         return clock_struct, _init_cond, param_struct, outputs
 
