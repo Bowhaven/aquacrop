@@ -221,7 +221,7 @@ def read_model_parameters(
             print(f'Kswp1 = {crop.Kswp}')
             print(f'fcdecline1 = {crop.fcdecline}')
 
-            crop, _, _, _ = compute_crop_calendar( # if this works, can remove the following else block and simply add it after this if block
+            crop = compute_crop_calendar( # if this works, can remove the following else block and simply add it after this if block
                 crop,
                 clock_struct.planting_dates,
                 clock_struct.simulation_start_date,
