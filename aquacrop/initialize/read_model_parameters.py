@@ -212,7 +212,36 @@ def read_model_parameters(
             print(f'Kswp_es = {crop.Kswp_es}')
             print(f'Ksccx_es = {crop.Ksccx_es}')
             print(f'relbio_es = {crop.relbio_es}')
+
+            if crop.Ksccx<1 or crop.Ksexpf<1:
+                if crop.CGC_CD==-1:
+                    crop.CGC_CD=crop.MaxCanopy/crop.MaxCanopyCD*crop.CGC
+                    
+                crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
+                                                                            /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
+
+                if crop.MaxCanopyCD>crop.CanopyDevEndCD:
+                    while crop.MaxCanopyCD>crop.CanopyDevEndCD and crop.Ksexpf<1:
+                        crop.Ksexpf=crop.Ksexpf+0.01
+                        crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
+                                                                        /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
+                    while crop.MaxCanopyCD>crop.CanopyDevEndCD and crop.CCx*crop.Ksccx>0.1 and crop.Ksccx>0.5:
+                        crop.Ksccx=crop.Ksccx-0.01
+                        crop.MaxCanopyCD = round(crop.EmergenceCD+(np.log((0.25*crop.CCx*crop.Ksccx*crop.CCx*crop.Ksccx/crop.CC0)
+                                                                        /(crop.CCx*crop.Ksccx-(0.98*crop.CCx*crop.Ksccx)))/crop.CGC_CD/crop.Ksexpf))
             
+            print(f'loc_ = {loc_}')
+            print(f'Ksccx = {crop.Ksccx}')
+            print(f'Ksexpf = {crop.Ksexpf}')
+            print(f'Kswp = {crop.Kswp}')
+            print(f'fcdecline = {crop.fcdecline}')
+            print(f'sfertstress = {crop.sfertstress}')
+            print(f'sf_es = {crop.sf_es}')
+            print(f'Ksexpf_es = {crop.Ksexpf_es}')
+            print(f'fcdecline_es = {crop.fcdecline_es}')
+            print(f'Kswp_es = {crop.Kswp_es}')
+            print(f'Ksccx_es = {crop.Ksccx_es}')
+            print(f'relbio_es = {crop.relbio_es}')
         else:
             crop = compute_crop_calendar(
                 crop,
