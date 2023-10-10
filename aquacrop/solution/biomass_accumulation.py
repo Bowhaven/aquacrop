@@ -168,6 +168,8 @@ def biomass_accumulation(
 
         Crop=Crop._replace(Ksccx=Crop.Ksccx_es[loc_],Ksexpf=Crop.Ksexpf_es[loc_],Kswp=Crop.Kswp_es[loc_],fcdecline=Crop.fcdecline_es[loc_])
 
+        print(f'biomass accumulation Crop.Ksexpf1 = {Crop.Ksexpf}')
+
         if Crop.Ksccx<1 or Crop.Ksexpf<1:
             Crop=Crop._replace(MaxCanopyCD = round(Crop.EmergenceCD+(np.log((0.25*Crop.CCx*Crop.Ksccx*Crop.CCx*Crop.Ksccx/Crop.CC0)
                                                                         /(Crop.CCx*Crop.Ksccx-(0.98*Crop.CCx*Crop.Ksccx)))/Crop.CGC_CD/Crop.Ksexpf)))
@@ -181,7 +183,8 @@ def biomass_accumulation(
                     Crop=Crop._replace(MaxCanopyCD = round(Crop.EmergenceCD+(np.log((0.25*Crop.CCx*Crop.Ksccx*Crop.CCx*Crop.Ksccx/Crop.CC0)
                                                                     /(Crop.CCx*Crop.Ksccx-(0.98*Crop.CCx*Crop.Ksccx)))/Crop.CGC_CD/Crop.Ksexpf)))
         
-        
+        print(f'biomass accumulation Crop.Ksexpf2 = {Crop.Ksexpf}')
+
     else:
         # No biomass accumulation outside of growing season
         NewCond_B = 0

@@ -143,6 +143,8 @@ def canopy_cover(
             dtCC = gdd
             tCCadj = NewCond.gdd_cum - NewCond.delayed_gdds
 
+        print(f'canopy_cover Crop.Ksexpf1 = {Crop.Ksexpf}')
+
         ## Canopy development (potential) ##
         if (tCCadj < Crop.Emergence) or (round(tCCadj) > Crop.Maturity):
             # No canopy development before emergence/germination or after
@@ -168,6 +170,8 @@ def canopy_cover(
                 day_fertility=NewCond.dap - Crop.MaxCanopyCD
                 NewCond.canopy_cover_ns=NewCond.ccx_act_ns-Crop.fcdecline*day_fertility*day_fertility/(Crop.SenescenceCD-Crop.MaxCanopyCD)
             
+            print(f'canopy_cover Crop.Ksexpf2 = {Crop.Ksexpf}')
+
         elif tCCadj > Crop.CanopyDevEnd:
             # No more canopy growth is possible or canopy in decline
             # Set CCx for calculation of withered canopy effects
