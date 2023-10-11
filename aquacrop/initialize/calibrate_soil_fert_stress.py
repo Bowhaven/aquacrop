@@ -177,7 +177,7 @@ def calibrate_soil_fert_stress(
         #print(crop.MaxCanopyCD)
         #print(crop.CanopyDevEndCD)    
     
-    if crop.soil_fert_stress==1:
+    if crop.need_calib==1:
         
         crop.HIGC = calculate_HIGC(
         crop.YldFormCD,
@@ -453,7 +453,7 @@ def calibrate_soil_fert_stress(
                 crop.Kswp_es[i+1]=Kswp_temp
                 crop.relbio_es[i+1]=bio_temp/Bio_top
 
-    if crop.soil_fert_stress==2:
+    if crop.need_calib==2:
         
         crop.HIGC = calculate_HIGC(
         crop.YldFormCD,

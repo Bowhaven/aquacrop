@@ -128,24 +128,24 @@ def compute_variables(
         # crop.calculate_additional_params()
 
         # Crop calander
-        if crop.soil_fert_stress==1:
-            crop, _,_,_= compute_crop_calendar(
-                crop,
-                clock_struct.planting_dates,
-                clock_struct.simulation_start_date,
-                clock_struct.time_span,
-                weather_df,
-                param_struct,
-            )
-        else:
-            crop = compute_crop_calendar(
-                crop,
-                clock_struct.planting_dates,
-                clock_struct.simulation_start_date,
-                clock_struct.time_span,
-                weather_df,
-                param_struct,
-            )
+        # if crop.soil_fert_stress==1:
+        #     crop, _,_,_= compute_crop_calendar(
+        #         crop,
+        #         clock_struct.planting_dates,
+        #         clock_struct.simulation_start_date,
+        #         clock_struct.time_span,
+        #         weather_df,
+        #         param_struct,
+        #     )
+        # else:
+        crop = compute_crop_calendar(
+            crop,
+            clock_struct.planting_dates,
+            clock_struct.simulation_start_date,
+            clock_struct.time_span,
+            weather_df,
+            param_struct,
+        )
 
         # Harvest index param_struct.Seasonal_Crop_List[clock_struct.season_counter].Paramsgrowth coefficient
         crop.HIGC = calculate_HIGC(

@@ -1,4 +1,4 @@
-import numpy as np
+import numpy as npParamStruct
 import pandas as pd
 
 from ..entities.modelConstants import ModelConstants
@@ -504,7 +504,7 @@ def compute_crop_calendar(
                 Bio_top+= Ksc_Total[i_]
         crop.Bio_top[len(Ksc_Total):len(Ksc_Total)+100]=Bio_top
 
-    if crop.soil_fert_stress == 1:
-        return crop, gdd_cum, Ksc_Total, Ks_Tr
+    if crop.need_calib == 1:
+        return crop, gdd_cum, Ksc_Total, Ks_Tr, ParamStruct
     else:
         return crop

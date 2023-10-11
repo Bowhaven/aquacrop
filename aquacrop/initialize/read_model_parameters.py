@@ -136,7 +136,10 @@ def read_model_parameters(
     
     if crop.harvest_date is None:
         if crop.soil_fert_stress==1: # think this needs some work to check that CalendarType is 2 (GDD) not 1 (CD)
-            crop, gdd_cum, Ksc_total, Ks_tr = compute_crop_calendar(
+
+            crop.need_calib=1
+
+            crop, gdd_cum, Ksc_total, Ks_tr, param_struct = compute_crop_calendar(
                 crop,
                 clock_struct.planting_dates,
                 clock_struct.simulation_start_date,
@@ -154,6 +157,8 @@ def read_model_parameters(
                 param_struct
             ) # I think this is equivalent to the '_initialize()' call in the test notebooks
 
+            # calibration complete, remove flag
+            crop.need_calib=0
             # if crop.Ksccx<1 or crop.Ksexpf<1:
             #     if crop.CGC_CD==-1:
             #         crop.CGC_CD=crop.MaxCanopy/crop.MaxCanopyCD*crop.CGC
@@ -213,7 +218,6 @@ def read_model_parameters(
             crop.Kswp_es=Kswp_es
             crop.Ksccx_es=Ksccx_es
             crop.relbio_es=relbio_es
-            crop.soil_fert_stress=0
 
             print(f'loc_ = {loc_}')
             print(f'Ksccx1 = {crop.Ksccx}')
