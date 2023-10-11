@@ -1,4 +1,4 @@
-import numpy as npParamStruct
+import numpy as np
 import pandas as pd
 
 from ..entities.modelConstants import ModelConstants
