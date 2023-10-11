@@ -156,8 +156,97 @@ def read_model_parameters(
                 Ks_tr,
                 param_struct
             ) # I think this is equivalent to the '_initialize()' call in the test notebooks
+            
+            # copy subsequent read_model_parameters:
+            mature = int(crop.MaturityCD + 30)
+            plant = pd.to_datetime("1990/" + crop.planting_date)
+            harv = plant + np.timedelta64(mature, "D")
+            new_harvest_date = str(harv.month) + "/" + str(harv.day)
+            crop.harvest_date = new_harvest_date
 
-            # calibration complete, remove flag
+            # extract years from simulation start and end date
+            start_end_years = [sim_start_date.year, sim_end_date.year]
+
+            # check if crop growing season runs over calander year
+            # Planting and harvest dates are in days/months format so just add arbitrary year
+            single_year = pd.to_datetime("1990/" + crop.planting_date) < pd.to_datetime(
+                "1990/" + crop.harvest_date
+            )
+
+            if single_year:
+                # if normal year
+
+                # Check if the simulation in the following year does not exceed planting date.
+                mock_simulation_end_date = pd.to_datetime("1990/" + f'{sim_end_date.month}' + "/" + f'{sim_end_date.day}')
+                mock_simulation_start_date = pd.to_datetime("1990/" + crop.planting_date)
+                last_simulation_year_does_not_start = mock_simulation_end_date <= mock_simulation_start_date
+
+                if last_simulation_year_does_not_start:
+                    start_end_years[1] = start_end_years[1] - 1
+
+                # specify the planting and harvest years as normal
+                plant_years = list(range(start_end_years[0], start_end_years[1] + 1))
+                harvest_years = plant_years
+            else:
+                # if it takes over a year then the plant year finishes 1 year before end of sim
+                # and harvest year starts 1 year after sim start
+
+                if (
+                    pd.to_datetime(str(start_end_years[1] + 2) + "/" + crop.harvest_date)
+                    < sim_end_date
+                ):
+
+                    # specify shifted planting and harvest years
+                    plant_years = list(range(start_end_years[0], start_end_years[1] + 1))
+                    harvest_years = list(range(start_end_years[0] + 1, start_end_years[1] + 2))
+                else:
+
+                    plant_years = list(range(start_end_years[0], start_end_years[1]))
+                    harvest_years = list(range(start_end_years[0] + 1, start_end_years[1] + 1))
+
+            # Correct for partial first growing season (may occur when simulating
+            # off-season soil water balance)
+            if (
+                pd.to_datetime(str(plant_years[0]) + "/" + crop.planting_date)
+                < clock_struct.simulation_start_date
+            ):
+                # shift everything by 1 year
+                plant_years = plant_years[1:]
+                harvest_years = harvest_years[1:]
+
+            # ensure number of planting and harvest years are the same
+            assert len(plant_years) == len(harvest_years)
+
+            # create lists to hold variables
+            planting_dates = []
+            harvest_dates = []
+            crop_choices = []
+
+            # save full harvest/planting dates and crop choices to lists
+            for i, _ in enumerate(plant_years):
+                planting_dates.append(
+                    str(plant_years[i]) + "/" + param_struct.CropList[0].planting_date
+                )
+                harvest_dates.append(
+                    str(harvest_years[i]) + "/" + param_struct.CropList[0].harvest_date
+                )
+                crop_choices.append(param_struct.CropList[0].Name)
+
+            # save crop choices
+            param_struct.CropChoices = list(crop_choices)
+
+            # save clock paramaters
+            clock_struct.planting_dates = pd.to_datetime(planting_dates)
+            clock_struct.harvest_dates = pd.to_datetime(harvest_dates)
+            clock_struct.n_seasons = len(planting_dates)
+
+            # Initialise growing season counter
+            if pd.to_datetime(clock_struct.step_start_time) == clock_struct.planting_dates[0]:
+                clock_struct.season_counter = 0
+            else:
+                clock_struct.season_counter = -1
+
+            # calibration complete, remove flag ##########################################################################################################
             crop.need_calib=0
             # if crop.Ksccx<1 or crop.Ksexpf<1:
             #     if crop.CGC_CD==-1:

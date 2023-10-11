@@ -681,6 +681,4 @@ def calibrate_soil_fert_stress(
                             else:
                                 Kswp_l=Kswp
 
-    
-
     return crop
