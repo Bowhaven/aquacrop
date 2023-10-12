@@ -249,6 +249,8 @@ class AquaCropModel:
                 self._clock_struct, self.soil, self.crop, self.weather_df
             )
 
+            self.crop.need_calib=0
+
             # read irrigation management
             self._param_struct = read_irrigation_management(
                 self._param_struct, self.irrigation_management, self._clock_struct
@@ -282,8 +284,6 @@ class AquaCropModel:
 
             # save model _weather to _init_cond
             self._weather = self.weather_df.values
-
-            self.crop.need_calib=0
 
         # read model params
         self._clock_struct, self._param_struct = read_model_parameters(
