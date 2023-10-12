@@ -81,8 +81,10 @@ model_os = AquaCropModel(
 model_os.run_model(till_termination=True)
 model_results = model_os.get_crop_growth()
 
-aq=pd.read_table('AquaCropV61Nr02052018\SIMUL\Crop.OUT',skiprows=4, delim_whitespace=True,encoding="latin1")
+aq=pd.read_table('AquaCropV61Nr02052018\OUTP\maizeWinCrop.OUT',skiprows=4, skipfooter=31,delim_whitespace=True,encoding="latin1")
+print(aq)
 aq=aq.drop([0])
+print(aq)
 
 aq.to_csv('aq_temp.csv')
 
@@ -90,7 +92,7 @@ aq=pd.read_csv('aq_temp.csv')
 
 import matplotlib.pyplot as plt
 
-aq
+print(aq)
 
 time=np.array(range(1,len(aq.index)))
 plt.figure(figsize=(20,10))
@@ -99,7 +101,7 @@ plt.plot(time,aq.loc[time,'CC'],label='Win')
 plt.plot(time,model_results.loc[time,'canopy_cover']*100,label='PY')
 plt.plot(time,aq.loc[time,'CC']-model_results.loc[time,'canopy_cover']*100,label='Diff')
 plt.legend()
-plt.savefig('test_figs\maize_CCx_irrmethod{0}_stress{1}.png'.format(IrrMethod,stress))
+# plt.savefig('test_figs\maize_CCx_irrmethod{0}_stress{1}.png'.format(IrrMethod,stress))
 plt.show()
 
 plt.figure()
@@ -107,7 +109,7 @@ plt.figure(figsize=(20,10))
 plt.plot(time,aq.loc[time,'Biomass'],label='Win')
 plt.plot(time,model_results.loc[time,'biomass']/100,label='PY')
 plt.legend()
-plt.savefig('test_figs\maize_Biomass_irrmethod{0}_stress{1}.png'.format(IrrMethod,stress))
+# plt.savefig('test_figs\maize_Biomass_irrmethod{0}_stress{1}.png'.format(IrrMethod,stress))
 plt.show()
 
 plt.figure()
@@ -122,7 +124,7 @@ plt.figure(figsize=(20,10))
 plt.plot(time,list(itertools.accumulate(aq.loc[time,'Tr'])),label='Win')
 plt.plot(time,list(itertools.accumulate(model_results.loc[time,'Tr'])),label='PY')
 plt.legend()
-plt.savefig('test_figs\maize_Traccum_irrmethod{0}_stress{1}.png'.format(IrrMethod,stress))
+# plt.savefig('test_figs\maize_Traccum_irrmethod{0}_stress{1}.png'.format(IrrMethod,stress))
 plt.show()
 
 #time=range(1,175)
@@ -131,5 +133,5 @@ plt.rcParams.update({'font.size': 22})
 plt.plot(time,aq.loc[time,'WP'],label='Win')
 plt.plot(time,model_results.loc[time,'NewCond.WPadj'],label='PY')
 plt.legend()
-plt.savefig('test_figs\maize_WPadj_irrmethod{0}_stress{1}.png'.format(IrrMethod,stress))
+# plt.savefig('test_figs\maize_WPadj_irrmethod{0}_stress{1}.png'.format(IrrMethod,stress))
 plt.show()
