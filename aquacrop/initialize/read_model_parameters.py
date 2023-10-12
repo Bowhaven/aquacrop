@@ -170,7 +170,7 @@ def read_model_parameters(
             # TODO: Check back on this, not sure this is exactly how the stress value is calculated in AquaCrop-Win
             if crop.sfertstress == 0: 
 
-                raise ValueError("No user-specified soil fertility stress value, no default available.", stacklevel=1)
+                raise ValueError("No user-specified soil fertility stress value, no default available.")
                  
             else:
                 stress=crop.sfertstress # Tim wants this to no longer be a user-specified variable, but instead always the default 1-relbio, but for testing purposes, keep this for now
