@@ -133,8 +133,11 @@ def read_model_parameters(
 
     # Store data
     param_struct.CO2.co2_data_processed = pd.Series(CO2conc_interp, index=sim_years)  # maybe get rid of this
+
+    # Define crop calendar mode
+    Mode = crop.CalendarType
     
-    if crop.harvest_date is None:
+    if Mode == 2: # GDD mode
         if crop.soil_fert_stress==1: # think this needs some work to check that CalendarType is 2 (GDD) not 1 (CD)
 
             crop, gdd_cum, Ksc_total, Ks_tr, param_struct = compute_crop_calendar(
@@ -240,7 +243,7 @@ def read_model_parameters(
             
 
     # catch exceptions when users specify a crop that triggers soil fert stress calibration when harvest date is also specified (i.e. not GDD mode) 
-    elif crop.soil_fert_stress != 0:
+    elif Mode == 1: # calendar days mode
         raise ValueError('You cannot currently run the soil fertility stress module in calendar days mode, please use GDD mode to continue using soil fertility stress.')
     
 
