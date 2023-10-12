@@ -138,7 +138,7 @@ def read_model_parameters(
     Mode = crop.CalendarType
     
     if Mode == 2: # GDD mode
-        if crop.soil_fert_stress==1: # think this needs some work to check that CalendarType is 2 (GDD) not 1 (CD)
+        if crop.need_calib==1: # think this needs some work to check that CalendarType is 2 (GDD) not 1 (CD)
 
             crop, gdd_cum, Ksc_total, Ks_tr, param_struct = compute_crop_calendar(
                 crop,
