@@ -240,6 +240,51 @@ class AquaCropModel:
         # get _weather data
         self.weather_df = read_weather_inputs(self._clock_struct, self.weather_df)
 
+        # If soil fert stress is on, run the rest of initialisation with need_calib=1 then reset need calib and continue
+        if self.crop.soil_fert_stress == 1:
+            self.crop.need_calib=1
+
+            # read model params
+            self._clock_struct, self._param_struct = read_model_parameters(
+                self._clock_struct, self.soil, self.crop, self.weather_df
+            )
+
+            # read irrigation management
+            self._param_struct = read_irrigation_management(
+                self._param_struct, self.irrigation_management, self._clock_struct
+            )
+
+            # read field management
+            self._param_struct = read_field_management(
+                self._param_struct, self.field_management, self.fallow_field_management
+            )
+
+            # read groundwater table
+            self._param_struct = read_groundwater_table(
+                self._param_struct, self.groundwater, self._clock_struct
+            )
+
+            # Compute additional variables
+            self._param_struct.CO2 = self.co2_concentration
+            self._param_struct = compute_variables(
+                self._param_struct, self.weather_df, self._clock_struct
+            )
+
+            # read, calculate inital conditions
+            self._param_struct, self._init_cond = read_model_initial_conditions(
+                self._param_struct, self._clock_struct, self.initial_water_content
+            )
+
+            self._param_struct = create_soil_profile(self._param_struct)
+
+            # Outputs results (water_flux, crop_growth, final_stats)
+            self._outputs = Output(self._clock_struct.time_span, self._init_cond.th)
+
+            # save model _weather to _init_cond
+            self._weather = self.weather_df.values
+
+            self.crop.need_calib=0
+
         # read model params
         self._clock_struct, self._param_struct = read_model_parameters(
             self._clock_struct, self.soil, self.crop, self.weather_df
