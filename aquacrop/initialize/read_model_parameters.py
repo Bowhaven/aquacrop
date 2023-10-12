@@ -226,7 +226,6 @@ def read_model_parameters(
                 param_struct,#for soil fertility stress
             )
 
-            print(f'loc_ = {loc_}')
             print(f'Ksccx2 = {crop.Ksccx}')
             print(f'Ksexpf2 = {crop.Ksexpf}')
             print(f'Kswp2 = {crop.Kswp}')
