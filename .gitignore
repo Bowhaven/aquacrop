@@ -177,3 +177,5 @@ tests/test_outputs.csv
 tests/test.csv
 
 tests/win-outputs.csv
+
+*.csv
